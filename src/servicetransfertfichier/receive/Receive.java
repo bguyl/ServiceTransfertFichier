@@ -91,8 +91,8 @@ public class Receive {
                 System.out.println(data[3]);
                 sendAck(data[3]);
                 nbBlock = data[3]+1;
-                System.out.println(dpr.getData().length);
-                if (dpr.getData().length < 516){
+                System.out.println(dpr.getLength());
+                if (dpr.getLength() < 516){
                     isReceiving = false;
                     System.out.println("Bloc d'arrêt");
                 }
