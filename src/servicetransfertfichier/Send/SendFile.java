@@ -92,6 +92,7 @@ public class SendFile {
                     deuxiemebyte = numBloc;
                     Data3[2]=0;
                     Data3[3]=(byte)numBloc;
+                    System.out.println("Envoi du packet : " + numBloc + " = " + Data3[2] + " + " + Data3[3]);
                 }
                 /*Data3[2]=0;
                 Data3[3]=1;*/
@@ -99,10 +100,13 @@ public class SendFile {
                     Data3[4+j] = Message[j];
                 }
                 dP = new DatagramPacket(Data3, n+4, ad, dPr.getPort());
+                
                 do{
-                dS.send(dP);
-                dS.receive(dPr);
-                }while(dPr.getData()[0] == 0 && dPr.getData()[1] == 4 && dPr.getData()[2] == premierbyte && dPr.getData()[3] == deuxiemebyte);
+                    dS.send(dP);
+                    dS.receive(dPr);
+                    System.out.println(dPr.getData()[0] +"/"+ dPr.getData()[1] +"/"+ dPr.getData()[2] +"/"+ dPr.getData()[3]);
+                }while(dPr.getData()[0] != 0 || dPr.getData()[1] != 4 || dPr.getData()[2] != (byte)premierbyte || dPr.getData()[3] != (byte)deuxiemebyte);
+                
                 numBloc ++;
             }
         }
