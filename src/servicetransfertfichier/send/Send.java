@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package servicetransfertfichier.Send;
+package servicetransfertfichier.send;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,10 +21,10 @@ import java.net.UnknownHostException;
  *
  * @author p1206264
  */
-public class SendFile {
+public class Send {
     
-    public SendFile(){
-        System.out.println("Construction du SendFile");
+    public Send(){
+        System.out.println("Construction du Send");
     }
     
     public int sendFile(String nomFichier, String Adresse){

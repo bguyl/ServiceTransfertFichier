@@ -6,8 +6,6 @@
 
 package servicetransfertfichier;
 
-import servicetransfertfichier.Send.SendFile;
-
 /**
  *
  * @author p1412480
