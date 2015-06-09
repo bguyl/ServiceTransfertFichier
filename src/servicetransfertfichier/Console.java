@@ -27,6 +27,7 @@ public class Console {
         onHelp();
 
         while(isRunning){
+            args = null;
             System.out.print("$ ");
             command = scanner.nextLine();
             if      (command.matches("quit(.*)"))   { onQuit(); }
@@ -43,8 +44,9 @@ public class Console {
             System.out.print("Erreur: Trop peu d'arguments\n" +
                     "Requis: 3 - Passés: " + (args.length - 1) + "\n" +
                     "Usage : get <addresse serveur> <fichier distant> <fichier local>\n");
+            return;
         }
-        //int n = receive.receiveFile(args[1], args[2], args[3]);
+        int n = receive.receiveFile(args[3], args[2], args[1]);
     }
 
     private static void onPut(){
@@ -53,6 +55,7 @@ public class Console {
             System.out.print("Erreur: Trop peu d'arguments\n" +
                     "Requis: 2 - Passés: " + (args.length - 1) + "\n" +
                     "Usage : put <addresse serveur> <fichier local>\n");
+            return;
         }
         int n = send.sendFile(args[2], args[1]);
     }

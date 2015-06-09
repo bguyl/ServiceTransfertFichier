@@ -71,7 +71,7 @@ public class Receive {
             }
             
             //TODO : Gérer les n°blocks au delà de 127. Num bloc est seulement data[3], data[2] toujours vide !
-            else if(nbBlock%127 != data[3]){
+            else if(nbBlock != data[3]){
                 System.out.println("Bloc déjà reçu :"+nbBlock+" data :"+data[3]);
                 sendAck(data[3]);
                 data = new byte[516];
@@ -107,7 +107,8 @@ public class Receive {
                 }
             }
         }
-        
+        try { f.close(); } catch (IOException e) { e.printStackTrace(); }
+        ds.close();
         return 0;
     }
     

@@ -16,10 +16,6 @@ public class ServiceTransfertFichier {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        /*SendFile Envoi;
-        Envoi = new SendFile(); 
-        int n = Envoi.sendFile("url.jpg", "192.168.1.42");
-        System.out.println(n);*/
         Console.run();
     }
     

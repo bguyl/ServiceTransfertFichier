@@ -105,6 +105,7 @@ public class Send {
                 
                 numBloc ++;
             }
+            fichier.close();
             dS.close();
         }
         catch (FileNotFoundException e) {
