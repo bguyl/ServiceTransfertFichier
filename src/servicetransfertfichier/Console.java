@@ -19,41 +19,47 @@ public class Console {
     private static Receive receive;
 
     public static void run(){
+        System.out.println("\n<===== Bienvenue sur STF ! =====>\n");
+        onHelp();
         while(isRunning){
+            System.out.print("$ ");
             command = scanner.nextLine();
-
-            if      (command.equals("quit")){ onQuit(command); }
-            else if(command.matches("put *")){ onPut(command); }
-            else if(command.matches("get *")){ onGet(command); }
-            else{ System.out.println("Commande non reconnue"); }
+            if      (command.matches("quit(.*)"))   { onQuit(); }
+            else if (command.matches("help(.*)"))   { onHelp(); }
+            else if (command.matches("put(.*)"))    { onPut(); }
+            else if (command.matches("get(.*)"))    { onGet(); }
+            else { System.out.println("Commande non reconnue"); }
         }
     }
 
-    private static void onGet(String cmd){
-        System.out.println("Let's get !");
+    private static void onGet(){
         args = command.split(" ");
-        System.out.println("Let's split !");
-
-        for(int i = 0; i < args.length; i++)
-            System.out.println(args[i]);
-
-        int n = receive.receiveFile(args[1], args[2], "localhost");
+        if(args.length < 4) {
+            System.out.print("Erreur: Trop peu d'arguments\n" +
+                    "Requis: 3 - Passés: " + (args.length - 1) + "\n" +
+                    "Usage : get <addresse serveur> <fichier distant> <fichier local>\n");
+        }
+        //int n = receive.receiveFile(args[1], args[2], args[3]);
     }
 
-    private static void onPut(String cmd){
-        System.out.println("Let's put !");
-        args = cmd.split(" ");
-        System.out.println("Let's split !");
-
-        for(int i = 0; i < args.length; i++)
-            System.out.println(args[i]);
-
-        int n = send.sendFile(args[1], "192.168.1.42");
-        System.out.println(n);
+    private static void onPut(){
+        args = command.split(" ");
+        if(args.length < 3) {
+            System.out.print("Erreur: Trop peu d'arguments\n" +
+                    "Requis: 2 - Passés: " + (args.length - 1) + "\n" +
+                    "Usage : put <addresse serveur> <fichier local>\n");
+        }
+        //int n = send.sendFile(args[1], args[2]);
     }
 
-    private static void onQuit(String cmd){
-        isRunning = false;
+    private static void onHelp(){
+        System.out.print("get : Récupère le fichier demandé\n"+
+            "put : Envois le fichier local sur le serveur\n"+
+            "quit : Ferme le programme\n"+
+            "help : Liste les commandes du programme\n");
     }
+
+
+    private static void onQuit(){ isRunning = false; }
 
 }
