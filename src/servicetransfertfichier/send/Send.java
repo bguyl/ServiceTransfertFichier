@@ -59,10 +59,6 @@ public class Send {
             DatagramPacket dP = new DatagramPacket(Data, Data.length, ad, 69);
             dS.send(dP);
             
-            for(i=0;i<Data.length;i++){
-                System.out.println(Data[i]);
-            }
-            
             //Reception de l'ACK
             byte[] Data2 = new byte[512];
             DatagramPacket dPr = new DatagramPacket(Data2,Data2.length);
@@ -109,6 +105,7 @@ public class Send {
                 
                 numBloc ++;
             }
+            dS.close();
         }
         catch (FileNotFoundException e) {
             return -1;
@@ -124,7 +121,7 @@ public class Send {
             return -4;
         }
         
-        
+
         
         return 0;
     }

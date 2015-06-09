@@ -19,8 +19,13 @@ public class Console {
     private static Receive receive;
 
     public static void run(){
+
+        send = new Send();
+        receive = new Receive();
+
         System.out.println("\n<===== Bienvenue sur STF ! =====>\n");
         onHelp();
+
         while(isRunning){
             System.out.print("$ ");
             command = scanner.nextLine();
@@ -49,7 +54,7 @@ public class Console {
                     "Requis: 2 - Passés: " + (args.length - 1) + "\n" +
                     "Usage : put <addresse serveur> <fichier local>\n");
         }
-        //int n = send.sendFile(args[1], args[2]);
+        int n = send.sendFile(args[2], args[1]);
     }
 
     private static void onHelp(){
