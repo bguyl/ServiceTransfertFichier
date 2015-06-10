@@ -42,7 +42,7 @@ public class Console {
         args = command.split(" ");
         if(args.length < 4) {
             System.out.print("Erreur: Trop peu d'arguments\n" +
-                    "Requis: 3 - Passés: " + (args.length - 1) + "\n" +
+                    "Requis: 3 - PassÃ©s: " + (args.length - 1) + "\n" +
                     "Usage : get <addresse serveur> <fichier distant> <fichier local>\n");
             return;
         }
@@ -53,7 +53,7 @@ public class Console {
         args = command.split(" ");
         if(args.length < 3) {
             System.out.print("Erreur: Trop peu d'arguments\n" +
-                    "Requis: 2 - Passés: " + (args.length - 1) + "\n" +
+                    "Requis: 2 - PassÃ©s: " + (args.length - 1) + "\n" +
                     "Usage : put <addresse serveur> <fichier local>\n");
             return;
         }
@@ -61,7 +61,7 @@ public class Console {
     }
 
     private static void onHelp(){
-        System.out.print("get : Récupère le fichier demandé\n"+
+        System.out.print("get : RÃ©cupÃ¨re le fichier demandï¿½\n"+
             "put : Envois le fichier local sur le serveur\n"+
             "quit : Ferme le programme\n"+
             "help : Liste les commandes du programme\n");

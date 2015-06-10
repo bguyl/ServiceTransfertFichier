@@ -62,7 +62,9 @@ public class Send {
             //Reception de l'ACK
             byte[] Data2 = new byte[512];
             DatagramPacket dPr = new DatagramPacket(Data2,Data2.length);
+            System.out.println("Réception de l'ACK ...");
             dS.receive(dPr);
+            System.out.println("Reçu :)");
             
             System.out.println("envoi du fichier :");
             
@@ -99,7 +101,9 @@ public class Send {
                 
                 do{
                     dS.send(dP);
+                    System.out.println("Réception ...");
                     dS.receive(dPr);
+                    System.out.println("Reçu !");
                     System.out.println(dPr.getData()[0] +"/"+ dPr.getData()[1] +"/"+ dPr.getData()[2] +"/"+ dPr.getData()[3]);
                 }while(dPr.getData()[0] != 0 || dPr.getData()[1] != 4 || dPr.getData()[2] != (byte)premierbyte || dPr.getData()[3] != (byte)deuxiemebyte);
                 
@@ -121,9 +125,7 @@ public class Send {
         catch(IOException e){
             return -4;
         }
-        
 
-        
         return 0;
     }
 }
