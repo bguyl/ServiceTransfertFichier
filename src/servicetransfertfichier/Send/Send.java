@@ -66,9 +66,13 @@ public class Send {
             //Reception de l'ACK
             byte[] Data2 = new byte[512];
             DatagramPacket dPr = new DatagramPacket(Data2,Data2.length);
-            System.out.println("Réception de l'ACK ...");
             dS.receive(dPr);
-           
+            
+            if(Data[1] == 5){
+                System.out.println("Erreur serveur");
+                return 1;
+            }
+            
             int n=0;
             int numBloc = 1;
             byte[] Message = new byte[512];
