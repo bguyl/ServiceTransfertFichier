@@ -20,7 +20,7 @@ public class ServiceTransfertFichier {
     public static void main(String[] args) {
         SendFile Envoi;
         Envoi = new SendFile(); 
-        int n = Envoi.sendFile("url.jpg", "192.168.1.42");
+        int n = Envoi.sendFile("url.jpg", "134.214.117.86");
         System.out.println(n);
     }
     
