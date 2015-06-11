@@ -28,6 +28,9 @@ public class Send {
     }
     
     public int sendFile(String nomFichier, String Adresse){
+        int j = 0;
+        int premierbyte = 0;
+        int deuxiemebyte =0;
         try{
             FileInputStream fichier = new FileInputStream(new File(nomFichier));
 
@@ -67,8 +70,7 @@ public class Send {
             System.out.println("Reçu :)");
             
             System.out.println("envoi du fichier :");
-            
-            int j;
+           
             int n=0;
             int numBloc = 1;
             byte[] Message = new byte[512];
@@ -77,8 +79,6 @@ public class Send {
                 byte[] Data3 = new byte[516];
                 Data3[0]=0;
                 Data3[1]=3;
-                int premierbyte;
-                int deuxiemebyte;
                 if(numBloc>255){
                     premierbyte = numBloc/256;
                     deuxiemebyte = numBloc-premierbyte*256;
@@ -101,14 +101,28 @@ public class Send {
                 
                 do{
                     dS.send(dP);
-                    System.out.println("Réception ...");
                     dS.receive(dPr);
-                    System.out.println("Reçu !");
-                    System.out.println(dPr.getData()[0] +"/"+ dPr.getData()[1] +"/"+ dPr.getData()[2] +"/"+ dPr.getData()[3]);
+                    //System.out.println(dPr.getData()[0] +"/"+ dPr.getData()[1] +"/"+ dPr.getData()[2] +"/"+ dPr.getData()[3]);
                 }while(dPr.getData()[0] != 0 || dPr.getData()[1] != 4 || dPr.getData()[2] != (byte)premierbyte || dPr.getData()[3] != (byte)deuxiemebyte);
-                
                 numBloc ++;
             }
+            
+            if(j == 512){
+                byte[] DataFin = new byte[516];
+                DataFin[0]=0;
+                DataFin[1]=3;
+                deuxiemebyte++;
+                if(deuxiemebyte == 0){
+                    premierbyte++;
+                }
+                do{
+                    dS.send(dP);
+                    dS.receive(dPr);
+                    //System.out.println(dPr.getData()[0] +"/"+ dPr.getData()[1] +"/"+ dPr.getData()[2] +"/"+ dPr.getData()[3]);
+                }while(dPr.getData()[0] != 0 || dPr.getData()[1] != 4 || dPr.getData()[2] != (byte)premierbyte || dPr.getData()[3] != (byte)deuxiemebyte);
+                
+            }
+            
             fichier.close();
             dS.close();
         }

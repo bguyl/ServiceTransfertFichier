@@ -6,6 +6,8 @@
 
 package servicetransfertfichier;
 
+import servicetransfertfichier.Send.SendFile;
+
 /**
  *
  * @author p1412480
@@ -16,7 +18,10 @@ public class ServiceTransfertFichier {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Console.run();
+        SendFile Envoi;
+        Envoi = new SendFile(); 
+        int n = Envoi.sendFile("url.jpg", "134.214.117.86");
+        System.out.println(n);
     }
     
 }
