@@ -22,7 +22,7 @@ public class Receive {
     private int port = 69;
     private FileOutputStream f;
     private boolean isReceiving = true;
-    int nbBlock;
+    byte nb2, nb3;
       
     public int receiveFile(String localName, String remoteName, String address){
         
@@ -31,9 +31,9 @@ public class Receive {
             ds = new DatagramSocket();
             f = new FileOutputStream(localName);
         }
-        catch (UnknownHostException ex)     {ex.printStackTrace();}
-        catch (SocketException ex)          {ex.printStackTrace();}
-        catch (FileNotFoundException ex)    {ex.printStackTrace();}
+        catch (UnknownHostException ex)     {System.out.println("Hôte injoignable"); return -3;}
+        catch (SocketException ex)          {System.out.println("Port déjà utilisé"); return -2;}
+        catch (FileNotFoundException ex)    {System.out.println("Fichier introuvable"); return -1;}
         
         /*Header*/
         byte[] msg = new byte[50];
@@ -58,9 +58,9 @@ public class Receive {
             ds.send(dps);
             ds.receive(dpr);
         }
-        catch (IOException ex) {ex.printStackTrace();}
+        catch (IOException ex) { System.out.println("Echec de la connexion"); return -1;}
         
-        nbBlock = 1;
+        nb2 = 0; nb3 = 1;
        
         while(isReceiving){
             
@@ -70,39 +70,34 @@ public class Receive {
                 System.err.println("Echec de la réception, code d'erreur :"+data[1]);
                 return 1;
             }
-            
-            //TODO : Gérer les n°blocks au delà de 127. Num bloc est seulement data[3], data[2] toujours vide !
-            else if(!isEquals(data[2], data[3], nbBlock)){
-                System.out.println("Bloc déjà reçu :"+nbBlock+" data :"+data[3]);
-                sendAck(data[3]);
+
+            else if(nb2 != data[2] || nb3 != data[3]){
+                System.out.println("Bloc déjà reçu :"+nb2+" "+nb3+" data :"+data[2]+";"+data[3]);
+                sendAck(nb2, nb3);
                 data = new byte[516];
                 dpr = new DatagramPacket(data, data.length);
                 try {ds.receive(dpr);}
-                catch (IOException ex) { ex.printStackTrace(); }
+                catch (IOException ex) { System.out.println("Echec de la connexion"); return -1;}
             }
             
             else {
                 try { f.write(dpr.getData(), 4, dpr.getData().length - 4); }
-                catch (IOException ex) { ex.printStackTrace(); }
-                System.out.println(data[3]);
-                sendAck(nbBlock);
-                setNbBlock(data[2], data[3]);
-                nbBlock++;
-                System.out.println(dpr.getLength());
+                catch (IOException ex) { System.out.println("Echec lors de l'écriture du fichier"); return -5;}
+                sendAck(nb2, nb3);
+                incrementNbBlock();
                 if (dpr.getLength() < 516){
                     isReceiving = false;
-                    System.out.println("Bloc d'arrêt");
+                    System.out.println("Reçu !");
                 }
                 else{
-                    System.out.println("Bloc 512 : On continue");
                     data = new byte[516];
                     dpr = new DatagramPacket(data, data.length);
                     try {ds.receive(dpr);}
-                    catch (IOException ex) { ex.printStackTrace(); }
+                    catch (IOException ex) { System.out.println("Echec de la connexion"); return -1;}
                 }
             }
         }
-        try { f.close(); } catch (IOException e) { e.printStackTrace(); }
+        try { f.close(); } catch (IOException e) { System.out.println("Echec lors de la fermeture du fichier"); return -5; }
         ds.close();
         return 0;
     }
@@ -117,28 +112,28 @@ public class Receive {
         dps = new DatagramPacket(ack, ack.length, ad, port);
         
         try { ds.send(dps); }
-        catch (IOException ex) { ex.printStackTrace(); }
+        catch (IOException ex) { System.out.println("Echec de la connexion");}
     }
 
-    public void setNbBlock(byte a, byte b){
-        nbBlock = a*256;
-        nbBlock = nbBlock + b;
+    public void sendAck(byte a, byte b){
+        byte[] ack = new byte[4];
+        ack[0] = 0x00;
+        ack[1] = 0x04;
+        ack[2] = a;
+        ack[3] = b;
+
+        dps = new DatagramPacket(ack, ack.length, ad, port);
+
+        try { ds.send(dps); }
+        catch (IOException ex) { System.out.println("Echec de la connexion");}
     }
 
-    public void incrementNbBlock(int i){
-        if(nbBlock == 255)
-            nbBlock = 0;
+    public void incrementNbBlock(){
+        if(nb3 == -1) {
+            nb2++;
+            nb3 = 0;
+        }
         else
-            nbBlock++;
+            nb3++;
     }
-
-    public boolean isEquals( byte a, byte b, int c){
-        byte first, second;
-        first = (byte)(nbBlock/256);
-        second = (byte)(nbBlock - first);
-        if(a != first || b != second)
-            return false;
-        return true;
-    }
-
 }

@@ -6,7 +6,6 @@
 
 package servicetransfertfichier;
 
-
 /**
  *
  * @author p1412480
