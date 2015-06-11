@@ -125,6 +125,13 @@ public class Receive {
         nbBlock = nbBlock + b;
     }
 
+    public void incrementNbBlock(int i){
+        if(nbBlock == 255)
+            nbBlock = 0;
+        else
+            nbBlock++;
+    }
+
     public boolean isEquals( byte a, byte b, int c){
         byte first, second;
         first = (byte)(nbBlock/256);
