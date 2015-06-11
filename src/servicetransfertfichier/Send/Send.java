@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package servicetransfertfichier.Send;
+package servicetransfertfichier.send;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,13 +21,16 @@ import java.net.UnknownHostException;
  *
  * @author p1206264
  */
-public class SendFile {
+public class Send {
     
-    public SendFile(){
-        System.out.println("Construction du SendFile");
+    public Send(){
+        System.out.println("Construction du Send");
     }
     
     public int sendFile(String nomFichier, String Adresse){
+        int j = 0;
+        int premierbyte = 0;
+        int deuxiemebyte =0;
         try{
             FileInputStream fichier = new FileInputStream(new File(nomFichier));
 
@@ -59,18 +62,15 @@ public class SendFile {
             DatagramPacket dP = new DatagramPacket(Data, Data.length, ad, 69);
             dS.send(dP);
             
-            for(i=0;i<Data.length;i++){
-                System.out.println(Data[i]);
-            }
-            
             //Reception de l'ACK
             byte[] Data2 = new byte[512];
             DatagramPacket dPr = new DatagramPacket(Data2,Data2.length);
+            System.out.println("Réception de l'ACK ...");
             dS.receive(dPr);
+            System.out.println("Reçu :)");
             
             System.out.println("envoi du fichier :");
-            
-            int j;
+           
             int n=0;
             int numBloc = 1;
             byte[] Message = new byte[512];
@@ -79,8 +79,6 @@ public class SendFile {
                 byte[] Data3 = new byte[516];
                 Data3[0]=0;
                 Data3[1]=3;
-                int premierbyte;
-                int deuxiemebyte;
                 if(numBloc>255){
                     premierbyte = numBloc/256;
                     deuxiemebyte = numBloc-premierbyte*256;
@@ -104,11 +102,29 @@ public class SendFile {
                 do{
                     dS.send(dP);
                     dS.receive(dPr);
-                    System.out.println(dPr.getData()[0] +"/"+ dPr.getData()[1] +"/"+ dPr.getData()[2] +"/"+ dPr.getData()[3]);
+                    //System.out.println(dPr.getData()[0] +"/"+ dPr.getData()[1] +"/"+ dPr.getData()[2] +"/"+ dPr.getData()[3]);
                 }while(dPr.getData()[0] != 0 || dPr.getData()[1] != 4 || dPr.getData()[2] != (byte)premierbyte || dPr.getData()[3] != (byte)deuxiemebyte);
-                
                 numBloc ++;
             }
+            
+            if(j == 512){
+                byte[] DataFin = new byte[516];
+                DataFin[0]=0;
+                DataFin[1]=3;
+                deuxiemebyte++;
+                if(deuxiemebyte == 0){
+                    premierbyte++;
+                }
+                do{
+                    dS.send(dP);
+                    dS.receive(dPr);
+                    //System.out.println(dPr.getData()[0] +"/"+ dPr.getData()[1] +"/"+ dPr.getData()[2] +"/"+ dPr.getData()[3]);
+                }while(dPr.getData()[0] != 0 || dPr.getData()[1] != 4 || dPr.getData()[2] != (byte)premierbyte || dPr.getData()[3] != (byte)deuxiemebyte);
+                
+            }
+            
+            fichier.close();
+            dS.close();
         }
         catch (FileNotFoundException e) {
             return -1;
@@ -123,9 +139,7 @@ public class SendFile {
         catch(IOException e){
             return -4;
         }
-        
-        
-        
+
         return 0;
     }
 }

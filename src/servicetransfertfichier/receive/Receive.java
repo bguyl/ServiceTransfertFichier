@@ -30,9 +30,9 @@ public class Receive {
             ds = new DatagramSocket();
             f = new FileOutputStream(localName);
         }
-        catch (UnknownHostException ex)     {Logger.getLogger(Receive.class.getName()).log(Level.SEVERE, null, ex);}
-        catch (SocketException ex)          {Logger.getLogger(Receive.class.getName()).log(Level.SEVERE, null, ex);}
-        catch (FileNotFoundException ex)    {Logger.getLogger(Receive.class.getName()).log(Level.SEVERE, null, ex);}
+        catch (UnknownHostException ex)     {ex.printStackTrace();}
+        catch (SocketException ex)          {ex.printStackTrace();}
+        catch (FileNotFoundException ex)    {ex.printStackTrace();}
         
         /*Header*/
         byte[] msg = new byte[50];
@@ -57,7 +57,7 @@ public class Receive {
             ds.send(dps);
             ds.receive(dpr);
         }
-        catch (IOException ex) {Logger.getLogger(Receive.class.getName()).log(Level.SEVERE, null, ex);}
+        catch (IOException ex) {ex.printStackTrace();}
         
         int nbBlock = 1;
        
@@ -66,28 +66,24 @@ public class Receive {
             port = dpr.getPort();
             
             if(data[0] != 0x00 || data[1] != 0x03){
-                System.err.println("Echec de la réception");
+                System.err.println("Echec de la réception, code d'erreur :"+data[1]);
                 return 1;
             }
             
             //TODO : Gérer les n°blocks au delà de 127. Num bloc est seulement data[3], data[2] toujours vide !
-            else if(nbBlock != data[3]){
+            else if(nbBlock%127 != data[3]){
                 System.out.println("Bloc déjà reçu :"+nbBlock+" data :"+data[3]);
                 sendAck(data[3]);
                 data = new byte[516];
                 dpr = new DatagramPacket(data, data.length);
                 try {ds.receive(dpr);}
-                catch (IOException ex) {
-                    Logger.getLogger(Receive.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                catch (IOException ex) { ex.printStackTrace(); }
             }
             
             else {
                 //TODO : Lever l'entête
-                try { f.write(dpr.getData()); }
-                catch (IOException ex) {
-                    Logger.getLogger(Receive.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                try { f.write(dpr.getData(), 4, dpr.getData().length - 4); }
+                catch (IOException ex) { ex.printStackTrace(); }
                 System.out.println(data[3]);
                 sendAck(data[3]);
                 nbBlock = data[3]+1;
@@ -101,14 +97,12 @@ public class Receive {
                     data = new byte[516];
                     dpr = new DatagramPacket(data, data.length);
                     try {ds.receive(dpr);}
-                    catch (IOException ex) {
-                        Logger.getLogger(Receive.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    catch (IOException ex) { ex.printStackTrace(); }
                 }
             }
-            
         }
-        
+        try { f.close(); } catch (IOException e) { e.printStackTrace(); }
+        ds.close();
         return 0;
     }
     
@@ -122,9 +116,7 @@ public class Receive {
         dps = new DatagramPacket(ack, ack.length, ad, port);
         
         try { ds.send(dps); }
-        catch (IOException ex) {
-            Logger.getLogger(Receive.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        catch (IOException ex) { ex.printStackTrace(); }
     }
     
 }
