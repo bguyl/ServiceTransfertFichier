@@ -28,10 +28,11 @@ public class Send {
     }
     
     public int sendFile(String nomFichier, String Adresse){
-        int j = 0;
-        int premierbyte = 0;
-        int deuxiemebyte =0;
+        
         try{
+            int j = 0;
+            int premierbyte = 0;
+            int deuxiemebyte =0;
             FileInputStream fichier = new FileInputStream(new File(nomFichier));
 
             DatagramSocket dS = new DatagramSocket(1151);
@@ -67,9 +68,6 @@ public class Send {
             DatagramPacket dPr = new DatagramPacket(Data2,Data2.length);
             System.out.println("Réception de l'ACK ...");
             dS.receive(dPr);
-            System.out.println("Reçu :)");
-            
-            System.out.println("envoi du fichier :");
            
             int n;
             int numBloc = 1;
@@ -107,7 +105,7 @@ public class Send {
                 numBloc ++;
             }
             
-            if(j == 512){
+            if(n == 512){ //Si le dernier packet est de longueur 512
                 byte[] DataFin = new byte[516];
                 DataFin[0]=0;
                 DataFin[1]=3;
@@ -115,28 +113,30 @@ public class Send {
                 if(deuxiemebyte == 0){
                     premierbyte++;
                 }
+                dP = new DatagramPacket(DataFin, 4, ad, dPr.getPort());
                 do{
                     dS.send(dP);
                     dS.receive(dPr);
-                    //System.out.println(dPr.getData()[0] +"/"+ dPr.getData()[1] +"/"+ dPr.getData()[2] +"/"+ dPr.getData()[3]);
                 }while(dPr.getData()[0] != 0 || dPr.getData()[1] != 4 || dPr.getData()[2] != (byte)premierbyte || dPr.getData()[3] != (byte)deuxiemebyte);
-                
             }
             
             fichier.close();
             dS.close();
         }
         catch (FileNotFoundException e) {
+            System.out.println("Fichier non trouvé");
             return -1;
         }
         catch(SocketException e){
-            System.out.println(e.getStackTrace());
+            System.out.println("Port déjà utilisé");
             return -2;
         }
         catch(UnknownHostException e){
+            System.out.println("Serveur distant ne répond pas");
             return -3;
         }
         catch(IOException e){
+            System.out.println("Erreur lors de la lecture du fichier");
             return -4;
         }
 
