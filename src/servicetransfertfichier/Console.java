@@ -61,7 +61,7 @@ public class Console {
     }
 
     private static void onHelp(){
-        System.out.print("get : Récupère le fichier demand�\n"+
+        System.out.print("get : Récupère le fichier demandé\n"+
             "put : Envois le fichier local sur le serveur\n"+
             "quit : Ferme le programme\n"+
             "help : Liste les commandes du programme\n");

@@ -71,7 +71,7 @@ public class Send {
             
             System.out.println("envoi du fichier :");
            
-            int n=0;
+            int n;
             int numBloc = 1;
             byte[] Message = new byte[512];
             while((n=fichier.read(Message)) >=0){
