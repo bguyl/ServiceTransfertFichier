@@ -22,13 +22,13 @@ import java.net.UnknownHostException;
  * @author p1206264
  */
 public class Send {
-    
+
     public Send(){
         System.out.println("Construction du Send");
     }
-    
+
     public int sendFile(String nomFichier, String Adresse){
-        
+
         try{
             int j = 0;
             int premierbyte = 0;
@@ -37,17 +37,17 @@ public class Send {
 
             DatagramSocket dS = new DatagramSocket(1151);
             InetAddress ad = InetAddress.getByName(Adresse);
-                       
+
             /*********************Création du WRQ*****************************/
             byte[] Data = new byte[512];
             int i;
             Data[0] = 0;
             Data[1] = 2;
-            
+
             for(i=0;i<nomFichier.length();i++){
                 Data[2+i] = nomFichier.getBytes()[i];
             }
-            
+
             //On met un octet à 0
             Data[2+nomFichier.length()]=0;
 
@@ -59,21 +59,25 @@ public class Send {
 
             Data[2+nomFichier.length()+mode.length()+1] = 0;
 
-            
+
             DatagramPacket dP = new DatagramPacket(Data, Data.length, ad, 69);
             dS.send(dP);
-            
+
             //Reception de l'ACK
             byte[] Data2 = new byte[512];
             DatagramPacket dPr = new DatagramPacket(Data2,Data2.length);
-            System.out.println("Réception de l'ACK ...");
             dS.receive(dPr);
-           
+
+            if(Data[1] == 5){
+                System.out.println("Erreur serveur");
+                return 1;
+            }
+
             int n;
             int numBloc = 1;
             byte[] Message = new byte[512];
             while((n=fichier.read(Message)) >=0){
-                
+
                 byte[] Data3 = new byte[516];
                 Data3[0]=0;
                 Data3[1]=3;
@@ -96,7 +100,7 @@ public class Send {
                     Data3[4+j] = Message[j];
                 }
                 dP = new DatagramPacket(Data3, n+4, ad, dPr.getPort());
-                
+
                 do{
                     dS.send(dP);
                     dS.receive(dPr);
@@ -104,7 +108,7 @@ public class Send {
                 }while(dPr.getData()[0] != 0 || dPr.getData()[1] != 4 || dPr.getData()[2] != (byte)premierbyte || dPr.getData()[3] != (byte)deuxiemebyte);
                 numBloc ++;
             }
-            
+
             if(n == 512){ //Si le dernier packet est de longueur 512
                 byte[] DataFin = new byte[516];
                 DataFin[0]=0;
@@ -119,7 +123,7 @@ public class Send {
                     dS.receive(dPr);
                 }while(dPr.getData()[0] != 0 || dPr.getData()[1] != 4 || dPr.getData()[2] != (byte)premierbyte || dPr.getData()[3] != (byte)deuxiemebyte);
             }
-            
+
             fichier.close();
             dS.close();
         }
