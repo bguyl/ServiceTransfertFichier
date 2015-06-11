@@ -22,6 +22,7 @@ public class Receive {
     private int port = 69;
     private FileOutputStream f;
     private boolean isReceiving = true;
+    int nbBlock;
       
     public int receiveFile(String localName, String remoteName, String address){
         
@@ -59,7 +60,7 @@ public class Receive {
         }
         catch (IOException ex) {ex.printStackTrace();}
         
-        int nbBlock = 1;
+        nbBlock = 1;
        
         while(isReceiving){
             
@@ -71,7 +72,7 @@ public class Receive {
             }
             
             //TODO : Gérer les n°blocks au delà de 127. Num bloc est seulement data[3], data[2] toujours vide !
-            else if(nbBlock%127 != data[3]){
+            else if(!isEquals(data[2], data[3], nbBlock)){
                 System.out.println("Bloc déjà reçu :"+nbBlock+" data :"+data[3]);
                 sendAck(data[3]);
                 data = new byte[516];
@@ -81,12 +82,12 @@ public class Receive {
             }
             
             else {
-                //TODO : Lever l'entête
                 try { f.write(dpr.getData(), 4, dpr.getData().length - 4); }
                 catch (IOException ex) { ex.printStackTrace(); }
                 System.out.println(data[3]);
-                sendAck(data[3]);
-                nbBlock = data[3]+1;
+                sendAck(nbBlock);
+                setNbBlock(data[2], data[3]);
+                nbBlock++;
                 System.out.println(dpr.getLength());
                 if (dpr.getLength() < 516){
                     isReceiving = false;
@@ -118,5 +119,19 @@ public class Receive {
         try { ds.send(dps); }
         catch (IOException ex) { ex.printStackTrace(); }
     }
-    
+
+    public void setNbBlock(byte a, byte b){
+        nbBlock = a*256;
+        nbBlock = nbBlock + b;
+    }
+
+    public boolean isEquals( byte a, byte b, int c){
+        byte first, second;
+        first = (byte)(nbBlock/256);
+        second = (byte)(nbBlock - first);
+        if(a != first || b != second)
+            return false;
+        return true;
+    }
+
 }
