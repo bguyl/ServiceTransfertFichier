@@ -20,3 +20,4 @@ nbdist/
 nbactions.xml
 nb-configuration.xml
 .nb-gradle/
+src/servicetransfertfichier/Send/Send.java

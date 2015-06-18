@@ -73,7 +73,7 @@ public class Send {
                 return 1;
             }
             
-            int n=0;
+            int n;
             int numBloc = 1;
             byte[] Message = new byte[512];
             while((n=fichier.read(Message)) >=0){
