@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ServiceTransfertFichier:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ServiceTransfertFichier_jar</output-path>
+    <root id="archive" name="ServiceTransfertFichier.jar">
+      <element id="module-output" name="ServiceTransfertFichier" />
+    </root>
+  </artifact>
+</component>
